@@ -418,24 +418,36 @@ input::placeholder{
     background: rgba(255,255,255,0.25);
 
 }
-.sunny {
-    background: linear-gradient(135deg, #f6d365, #fda085);
-}
-
-.cloudy {
-    background: linear-gradient(135deg, #bdc3c7, #2c3e50);
-}
-
-.rainy {
+.clear-day {
     background: linear-gradient(135deg, #4facfe, #00f2fe);
 }
 
-.snowy {
-    background: linear-gradient(135deg, #e6dada, #274046);
+.clear-night {
+    background: linear-gradient(135deg, #141E30, #243B55);
 }
 
-.night {
-    background: linear-gradient(135deg, #141E30, #243B55);
+.clouds-day {
+    background: linear-gradient(135deg, #bdc3c7, #7f8c8d);
+}
+
+.clouds-night {
+    background: linear-gradient(135deg, #2c3e50, #4b6584);
+}
+
+.rain-day {
+    background: linear-gradient(135deg, #4facfe, #3a7bd5);
+}
+
+.rain-night {
+    background: linear-gradient(135deg, #232526, #414345);
+}
+
+.snow-day {
+    background: linear-gradient(135deg, #e6dada, #ffffff);
+}
+
+.snow-night {
+    background: linear-gradient(135deg, #3a6073, #16222a);
 }
 .time-box{
 
