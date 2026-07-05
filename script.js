@@ -98,14 +98,19 @@ sunset.textContent =
         hour: "2-digit",
         minute: "2-digit"
     });
-    currentWeather = data.weather[0].main;
-    weatherIcon.textContent =
-        getWeatherEmoji(data.weather[0].main);
-changeBackground(data.weather[0].main);
-    startClock(data.timezone);
-    getForecast(data.name);
+          minute: "2-digit"
+    });
+   currentWeather = data.weather[0].main;
+
+weatherIcon.textContent =
+    getWeatherEmoji(data.weather[0].main);
+
+startClock(data.timezone);
+
+getForecast(data.name);
 
 }
+
 
 async function getForecast(city) {
 
@@ -246,7 +251,7 @@ function getLocationWeather() {
     );
 
 }
-function changeBackground(weather) {
+function changeBackground(weather, hour) {
 
     document.body.className = "";
 
@@ -299,7 +304,7 @@ function startClock(timezone) {
             });
 
         const hour = cityTime.getHours();
-
+   changeBackground(currentWeather, hour);
         if (hour >= 5 && hour < 12) {
 
             greeting.textContent = "🌅 Good Morning";
