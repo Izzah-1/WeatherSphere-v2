@@ -3,7 +3,7 @@ const apiKey = "e304ad530139c42a2642880685b4b830";
 
 const cityInput = document.getElementById("city");
 const searchBtn = document.getElementById("searchBtn");
-
+const locationBtn = document.getElementById("locationBtn");
 const cityName = document.getElementById("cityName");
 const temperature = document.getElementById("temperature");
 const description = document.getElementById("description");
@@ -19,7 +19,7 @@ const forecastContainer = document.getElementById("forecastContainer");
 searchBtn.addEventListener("click", () => {
     getWeather();
 });
-
+locationBtn.addEventListener("click", getLocationWeather);
 cityInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
         getWeather();
@@ -179,6 +179,52 @@ function getWeatherEmoji(weather) {
             return "🌤️";
 
     }
+
+}
+function getLocationWeather() {
+
+    if (!navigator.geolocation) {
+
+        alert("Geolocation is not supported by your browser.");
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        async (position) => {
+
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            const url =
+`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+
+            try {
+
+                const response = await fetch(url);
+
+                const data = await response.json();
+
+                updateCurrentWeather(data);
+
+            }
+
+            catch {
+
+                alert("Unable to get your location weather.");
+
+            }
+
+        },
+
+        () => {
+
+            alert("Location permission denied.");
+
+        }
+
+    );
 
 }
 
