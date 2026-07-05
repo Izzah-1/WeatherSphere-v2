@@ -13,7 +13,8 @@ const humidity = document.getElementById("humidity");
 const wind = document.getElementById("wind");
 const pressure = document.getElementById("pressure");
 const visibility = document.getElementById("visibility");
-
+const sunrise = document.getElementById("sunrise");
+const sunset = document.getElementById("sunset");
 const forecastContainer = document.getElementById("forecastContainer");
 
 searchBtn.addEventListener("click", () => {
@@ -80,7 +81,20 @@ function updateCurrentWeather(data) {
 
     visibility.textContent =
         (data.visibility / 1000).toFixed(1) + " km";
+const sunriseTime = new Date(data.sys.sunrise * 1000);
+const sunsetTime = new Date(data.sys.sunset * 1000);
 
+sunrise.textContent =
+    sunriseTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+sunset.textContent =
+    sunsetTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
     weatherIcon.textContent =
         getWeatherEmoji(data.weather[0].main);
 
