@@ -470,5 +470,37 @@ input::placeholder{
     letter-spacing:2px;
 
 }
+.clear-day{
+    background:linear-gradient(135deg,#56CCF2,#2F80ED);
+}
+
+.clear-night{
+    background:linear-gradient(135deg,#0F2027,#203A43,#2C5364);
+}
+
+.clouds-day{
+    background:linear-gradient(135deg,#BDC3C7,#6DD5FA);
+}
+
+.clouds-night{
+    background:linear-gradient(135deg,#232526,#414345);
+}
+
+.rain-day{
+    background:linear-gradient(135deg,#4FACFE,#00F2FE);
+}
+
+.rain-night{
+    background:linear-gradient(135deg,#141E30,#243B55);
+}
+
+.snow-day{
+    background:linear-gradient(135deg,#E6DADA,#FFFFFF);
+}
+
+.snow-night{
+    background:linear-gradient(135deg,#4B79A1,#283E51);
+}
+
 
 
