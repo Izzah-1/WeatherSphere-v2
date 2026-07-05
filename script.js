@@ -100,6 +100,7 @@ sunset.textContent =
     weatherIcon.textContent =
         getWeatherEmoji(data.weather[0].main);
 changeBackground(data.weather[0].main);
+    startClock(data.timezone);
     getForecast(data.name);
 
 }
@@ -272,6 +273,60 @@ function changeBackground(weather) {
             break;
 
     }
+
+}
+function startClock(timezone) {
+
+    clearInterval(clockInterval);
+
+    function updateClock() {
+
+        const now = new Date();
+
+        const utc =
+            now.getTime() + now.getTimezoneOffset() * 60000;
+
+        const cityTime =
+            new Date(utc + timezone * 1000);
+
+        localTime.textContent =
+            cityTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            });
+
+        const hour = cityTime.getHours();
+
+        if (hour >= 5 && hour < 12) {
+
+            greeting.textContent = "🌅 Good Morning";
+
+        }
+
+        else if (hour >= 12 && hour < 17) {
+
+            greeting.textContent = "☀️ Good Afternoon";
+
+        }
+
+        else if (hour >= 17 && hour < 20) {
+
+            greeting.textContent = "🌇 Good Evening";
+
+        }
+
+        else {
+
+            greeting.textContent = "🌙 Good Night";
+
+        }
+
+    }
+
+    updateClock();
+
+    clockInterval = setInterval(updateClock, 1000);
 
 }
 
