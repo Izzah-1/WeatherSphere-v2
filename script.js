@@ -1,42 +1,63 @@
-alert("Script loaded!");
+alert("WeatherSphere Pro Loaded!");
+
 const apiKey = "a517bd71a71c50f36443c6372b0d88e8";
 
+// INPUTS
 const cityInput = document.getElementById("city");
 const searchBtn = document.getElementById("searchBtn");
 const locationBtn = document.getElementById("locationBtn");
+
+// MAIN WEATHER
 const cityName = document.getElementById("cityName");
 const temperature = document.getElementById("temperature");
 const description = document.getElementById("description");
 const weatherIcon = document.getElementById("weatherIcon");
 
+// DETAILS
 const humidity = document.getElementById("humidity");
 const wind = document.getElementById("wind");
 const pressure = document.getElementById("pressure");
 const visibility = document.getElementById("visibility");
 const sunrise = document.getElementById("sunrise");
 const sunset = document.getElementById("sunset");
-const forecastContainer = document.getElementById("forecastContainer");
+
+// EXTRA
 const greeting = document.getElementById("greeting");
 const localTime = document.getElementById("localTime");
-let clockInterval;
+const forecastContainer = document.getElementById("forecastContainer");
+
+let clockInterval = null;
 let currentWeather = "";
-searchBtn.addEventListener("click", () => {
-    getWeather();
-});
-locationBtn.addEventListener("click", getLocationWeather);
-cityInput.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
+
+// EVENTS
+searchBtn.addEventListener("click", getWeather);
+
+cityInput.addEventListener("keypress", (e) => {
+
+    if (e.key === "Enter") {
+
         getWeather();
+
     }
+
 });
+
+locationBtn.addEventListener("click", getLocationWeather);
+
+// ===========================
+// GET WEATHER BY CITY
+// ===========================
 
 async function getWeather() {
 
     const city = cityInput.value.trim();
 
     if (city === "") {
+
         alert("Please enter a city.");
+
         return;
+
     }
 
     const url =
@@ -47,7 +68,9 @@ async function getWeather() {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error("City not found.");
+
+            throw new Error("City not found");
+
         }
 
         const data = await response.json();
@@ -63,7 +86,65 @@ async function getWeather() {
     }
 
 }
+
+// ===========================
+// GET WEATHER FROM LOCATION
+// ===========================
+
+function getLocationWeather() {
+
+    if (!navigator.geolocation) {
+
+        alert("Geolocation not supported.");
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        async(position)=>{
+
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            const url =
+`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+
+            try{
+
+                const response = await fetch(url);
+
+                const data = await response.json();
+
+                updateCurrentWeather(data);
+
+            }
+
+            catch{
+
+                alert("Unable to fetch location weather.");
+
+            }
+
+        },
+
+        ()=>{
+
+            alert("Location permission denied.");
+
+        }
+
+    );
+
+}
+// ===========================
+// UPDATE WEATHER
+// ===========================
+
 function updateCurrentWeather(data) {
+
+    currentWeather = data.weather[0].main;
 
     cityName.textContent = data.name;
 
@@ -72,6 +153,9 @@ function updateCurrentWeather(data) {
 
     description.textContent =
         data.weather[0].description;
+
+    weatherIcon.textContent =
+        getWeatherEmoji(currentWeather);
 
     humidity.textContent =
         data.main.humidity + "%";
@@ -84,43 +168,47 @@ function updateCurrentWeather(data) {
 
     visibility.textContent =
         (data.visibility / 1000).toFixed(1) + " km";
-const sunriseTime = new Date(data.sys.sunrise * 1000);
-const sunsetTime = new Date(data.sys.sunset * 1000);
 
-sunrise.textContent =
-    sunriseTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    const sunriseTime = new Date(data.sys.sunrise * 1000);
 
-sunset.textContent =
-    sunsetTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-      
-   currentWeather = data.weather[0].main;
+    const sunsetTime = new Date(data.sys.sunset * 1000);
 
-weatherIcon.textContent =
-    getWeatherEmoji(data.weather[0].main);
+    sunrise.textContent =
+        sunriseTime.toLocaleTimeString([], {
 
-startClock(data.timezone);
+            hour: "2-digit",
+            minute: "2-digit"
 
-getForecast(data.name);
+        });
+
+    sunset.textContent =
+        sunsetTime.toLocaleTimeString([], {
+
+            hour: "2-digit",
+            minute: "2-digit"
+
+        });
+
+    startClock(data.timezone);
+
+    getForecast(data.name);
 
 }
 
+// ===========================
+// 5 DAY FORECAST
+// ===========================
 
-async function getForecast(city) {
+async function getForecast(city){
 
     const url =
 `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
 
-    try {
+    try{
 
         const response = await fetch(url);
 
-        if (!response.ok) return;
+        if(!response.ok) return;
 
         const data = await response.json();
 
@@ -135,45 +223,59 @@ async function getForecast(city) {
     }
 
 }
-function displayForecast(forecastList) {
+
+function displayForecast(list){
 
     forecastContainer.innerHTML = "";
 
-    const dailyForecast = [];
+    const days = [];
 
-    forecastList.forEach(item => {
+    list.forEach(item=>{
 
-        if (item.dt_txt.includes("12:00:00")) {
+        if(item.dt_txt.includes("12:00:00")){
 
-            dailyForecast.push(item);
+            days.push(item);
 
         }
 
     });
 
-    dailyForecast.slice(0, 5).forEach(day => {
+    days.slice(0,5).forEach(day=>{
 
         const date = new Date(day.dt_txt);
 
-        const dayName = date.toLocaleDateString("en-US", {
-            weekday: "short"
-        });
+        const dayName =
+            date.toLocaleDateString("en-US",{
+
+                weekday:"short"
+
+            });
 
         forecastContainer.innerHTML += `
-            <div class="forecast-card">
-                <p>${dayName}</p>
-                <div>${getWeatherEmoji(day.weather[0].main)}</div>
-                <span>${Math.round(day.main.temp)}°C</span>
-            </div>
+
+        <div class="forecast-card">
+
+            <p>${dayName}</p>
+
+            <div>${getWeatherEmoji(day.weather[0].main)}</div>
+
+            <span>${Math.round(day.main.temp)}°C</span>
+
+        </div>
+
         `;
 
     });
 
 }
 
-function getWeatherEmoji(weather) {
+// ===========================
+// WEATHER ICONS
+// ===========================
 
-    switch (weather) {
+function getWeatherEmoji(weather){
+
+    switch(weather){
 
         case "Clear":
             return "☀️";
@@ -204,58 +306,88 @@ function getWeatherEmoji(weather) {
     }
 
 }
-function getLocationWeather() {
+// ===========================
+// LIVE CLOCK
+// ===========================
 
-    if (!navigator.geolocation) {
+function startClock(timezone){
 
-        alert("Geolocation is not supported by your browser.");
-        return;
+    clearInterval(clockInterval);
 
-    }
+    function updateClock(){
 
-    navigator.geolocation.getCurrentPosition(
+        const now = new Date();
 
-        async (position) => {
+        const utc =
+            now.getTime() + now.getTimezoneOffset() * 60000;
 
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+        const cityTime =
+            new Date(utc + timezone * 1000);
 
-            const url =
-`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+        localTime.textContent =
+            cityTime.toLocaleTimeString([],{
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            });
 
-            try {
+        const hour = cityTime.getHours();
 
-                const response = await fetch(url);
+        // Greeting
+        if(hour >= 5 && hour < 12){
 
-                const data = await response.json();
-
-                updateCurrentWeather(data);
-
-            }
-
-            catch {
-
-                alert("Unable to get your location weather.");
-
-            }
-
-        },
-
-        () => {
-
-            alert("Location permission denied.");
+            greeting.textContent = "🌅 Good Morning";
 
         }
 
-    );
+        else if(hour >= 12 && hour < 17){
+
+            greeting.textContent = "☀️ Good Afternoon";
+
+        }
+
+        else if(hour >= 17 && hour < 20){
+
+            greeting.textContent = "🌇 Good Evening";
+
+        }
+
+        else{
+
+            greeting.textContent = "🌙 Good Night";
+
+        }
+
+        changeBackground(currentWeather, hour);
+
+    }
+
+    updateClock();
+
+    clockInterval = setInterval(updateClock,1000);
 
 }
-function changeBackground(weather, hour) {
-document.body.className = "";
+
+// ===========================
+// SMART BACKGROUND
+// ===========================
+
+function changeBackground(weather,hour){
+
+    document.body.classList.remove(
+        "clear-day",
+        "clear-night",
+        "clouds-day",
+        "clouds-night",
+        "rain-day",
+        "rain-night",
+        "snow-day",
+        "snow-night"
+    );
 
     const isNight = hour >= 20 || hour < 6;
 
-    switch (weather) {
+    switch(weather){
 
         case "Clear":
             document.body.classList.add(
@@ -288,63 +420,6 @@ document.body.className = "";
                 isNight ? "clear-night" : "clear-day"
             );
 
-    
-
     }
 
 }
-function startClock(timezone) {
-
-    clearInterval(clockInterval);
-
-    function updateClock() {
-
-        const now = new Date();
-
-        const utc =
-            now.getTime() + now.getTimezoneOffset() * 60000;
-
-        const cityTime =
-            new Date(utc + timezone * 1000);
-
-        localTime.textContent =
-            cityTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            });
-
-        const hour = cityTime.getHours();
-   changeBackground(currentWeather, hour);
-        if (hour >= 5 && hour < 12) {
-
-            greeting.textContent = "🌅 Good Morning";
-
-        }
-
-        else if (hour >= 12 && hour < 17) {
-
-            greeting.textContent = "☀️ Good Afternoon";
-
-        }
-
-        else if (hour >= 17 && hour < 20) {
-
-            greeting.textContent = "🌇 Good Evening";
-
-        }
-
-        else {
-
-            greeting.textContent = "🌙 Good Night";
-
-        }
-
-    }
-
-    updateClock();
-
-    clockInterval = setInterval(updateClock, 1000);
-
-}
-
