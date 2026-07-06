@@ -159,7 +159,8 @@ function updateCurrentWeather(data) {
     weatherIcon.textContent =
         getWeatherEmoji(currentWeather);
     
-weatherQuote.textContent = "TEST SUCCESS!";
+updateQuote(currentWeather);
+
 
     humidity.textContent =
         data.main.humidity + "%";
