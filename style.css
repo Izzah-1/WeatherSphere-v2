@@ -513,6 +513,27 @@ input::placeholder{
 .snow-night{
     background:linear-gradient(135deg,#4B79A1,#283E51);
 }
+.quote-box{
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,.12);
+
+    font-style:italic;
+
+    color:white;
+
+    font-size:17px;
+
+    line-height:1.5;
+
+    animation:fadeUp .8s ease;
+
+}
 
 
 
